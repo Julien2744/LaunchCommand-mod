@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "launch-command",
+	"version": "${version}",
+	"name": "Launch Command",
+	"description": "Launch entity via a command",
+	"authors": [
+		"shimik"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/launch-command/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"launchcmd.launchcmd.LaunchCommand"
+		],
+		"fabric-datagen": [
+			"launchcmd.launchcmd.LaunchCommandDataGenerator"
+		],
+		"client": [
+			"launchcmd.launchcmd.LaunchCommandClient"
+		]
+	},
+	"mixins": [
+		"launch-command.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.13",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
