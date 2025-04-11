@@ -9,7 +9,7 @@
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/Julien2744/LaunchCommand-mod"
 	},
 	"license": "MIT",
 	"icon": "assets/launch-command/icon.png",
@@ -29,7 +29,7 @@
 		"launch-command.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16.13",
+		"fabricloader": ">=0.16.7",
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*"
