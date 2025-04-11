@@ -11,6 +11,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
+import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,15 @@ public class LaunchCommand implements ModInitializer {
 										)
 								)
 							)
+							.then(CommandManager.literal("looking")
+									.then(CommandManager.argument("force", DoubleArgumentType.doubleArg())
+										.executes((context) -> {
+											return launchLooking((ServerCommandSource) context.getSource(),
+													EntityArgumentType.getEntities(context, "targets"),
+													DoubleArgumentType.getDouble(context, "force"));
+										})
+									)
+							)
 					))
 			);
 		});
@@ -68,11 +78,9 @@ public class LaunchCommand implements ModInitializer {
 
 		while (entitiesCollection.hasNext()) {
 			Entity target = (Entity) entitiesCollection.next();
-			if(target instanceof LivingEntity) {
-				//source.sendFeedback(() -> Text.of("Add motion to " + ((LivingEntity)target).getUuidAsString() + "with x:" + motX + " y:" + motY + " z:" + motZ), false);
-				((LivingEntity)target).addVelocity(motX, motY, motZ);
-				((LivingEntity)target).velocityModified = true;
-			}
+			//source.sendFeedback(() -> Text.of("Add motion to " + ((LivingEntity)target).getName() + "with x:" + motX + " y:" + motY + " z:" + motZ), false);
+			target.addVelocity(motX, motY, motZ);
+			target.velocityModified = true;
 		}
 
 		return 1;
@@ -83,11 +91,30 @@ public class LaunchCommand implements ModInitializer {
 
 		while (entitiesCollection.hasNext()) {
 			Entity target = (Entity) entitiesCollection.next();
-			if(target instanceof LivingEntity) {
-				//source.sendFeedback(() -> Text.of("Set motion to " + ((LivingEntity)target).getUuidAsString() + "with x:" + motX + " y:" + motY + " z:" + motZ), false);
-				((LivingEntity)target).setVelocity(motX, motY, motZ);
-				((LivingEntity)target).velocityModified = true;
-			}
+			//source.sendFeedback(() -> Text.of("Set motion to " + ((LivingEntity)target).getName() + "with x:" + motX + " y:" + motY + " z:" + motZ), false);
+			target.setVelocity(motX, motY, motZ);
+			target.velocityModified = true;
+		}
+
+		return 1;
+	}
+
+	private static int launchLooking(ServerCommandSource source, Collection<? extends Entity> entityToLaunch, double force) {
+		//angle is in degree, we need to convert it to radian
+		float sourcePitch = (float)((-(source.getRotation().x) * (Math.PI / 180.0f)) + Math.PI / 2);
+		float sourceYaw = (float)((source.getRotation().y * (Math.PI / 180.0f)) + Math.PI / 2);
+
+		Iterator entitiesCollection = entityToLaunch.iterator();
+
+		while (entitiesCollection.hasNext()) {
+			Entity target = (Entity) entitiesCollection.next();
+			//source.sendFeedback(() -> Text.of("Set motion to " + target.getName() + " with force:" + force + " pitch(x):" + sourceYaw + " yaw(y):" + sourcePitch), false);
+			target.addVelocity(
+					force * (Math.cos(sourceYaw)*Math.sin(sourcePitch)),
+					force * Math.sin(sourcePitch - Math.PI / 2),
+					force * (Math.sin(sourceYaw)*Math.sin(sourcePitch))
+			);
+			target.velocityModified = true;
 		}
 
 		return 1;
