@@ -27,19 +27,38 @@ public class LaunchCommand implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			dispatcher.register(CommandManager.literal("launch").requires((source) -> {
 				return source.hasPermissionLevel(2);})
-					.then((CommandManager.argument("target", EntityArgumentType.entities()).then(CommandManager.literal("addMotion")
-						.then(CommandManager.argument("motionX", DoubleArgumentType.doubleArg())
-								.then(CommandManager.argument("motionY", DoubleArgumentType.doubleArg())
-										.then(CommandManager.argument("motionZ", DoubleArgumentType.doubleArg())
-											.executes((context) -> {
-												return launchAddMotion((ServerCommandSource) context.getSource(),
-														EntityArgumentType.getEntities(context, "target"),
-														DoubleArgumentType.getDouble(context, "motionX"),
-														DoubleArgumentType.getDouble(context, "motionY"),
-														DoubleArgumentType.getDouble(context, "motionZ"));
-											}))
-								))
-					)))
+					.then((CommandManager.argument("targets", EntityArgumentType.entities())
+							.then(CommandManager.literal("addMotion")
+								.then(CommandManager.argument("motionX", DoubleArgumentType.doubleArg())
+										.then(CommandManager.argument("motionY", DoubleArgumentType.doubleArg())
+												.then(CommandManager.argument("motionZ", DoubleArgumentType.doubleArg())
+													.executes((context) -> {
+														return launchAddMotion((ServerCommandSource) context.getSource(),
+																EntityArgumentType.getEntities(context, "targets"),
+																DoubleArgumentType.getDouble(context, "motionX"),
+																DoubleArgumentType.getDouble(context, "motionY"),
+																DoubleArgumentType.getDouble(context, "motionZ"));
+													})
+												)
+										)
+								)
+							)
+							.then(CommandManager.literal("setMotion")
+								.then(CommandManager.argument("motionX", DoubleArgumentType.doubleArg())
+										.then(CommandManager.argument("motionY", DoubleArgumentType.doubleArg())
+												.then(CommandManager.argument("motionZ", DoubleArgumentType.doubleArg())
+														.executes((context) -> {
+															return launchSetMotion((ServerCommandSource) context.getSource(),
+																	EntityArgumentType.getEntities(context, "targets"),
+																	DoubleArgumentType.getDouble(context, "motionX"),
+																	DoubleArgumentType.getDouble(context, "motionY"),
+																	DoubleArgumentType.getDouble(context, "motionZ"));
+														})
+												)
+										)
+								)
+							)
+					))
 			);
 		});
 	}
@@ -50,8 +69,23 @@ public class LaunchCommand implements ModInitializer {
 		while (entitiesCollection.hasNext()) {
 			Entity target = (Entity) entitiesCollection.next();
 			if(target instanceof LivingEntity) {
-				//source.sendFeedback(() -> Text.of("Called entity " + ((LivingEntity)target).getUuidAsString() + "x:" + motX + " y:" + motY + " z:" + motZ), false);
+				//source.sendFeedback(() -> Text.of("Add motion to " + ((LivingEntity)target).getUuidAsString() + "with x:" + motX + " y:" + motY + " z:" + motZ), false);
 				((LivingEntity)target).addVelocity(motX, motY, motZ);
+				((LivingEntity)target).velocityModified = true;
+			}
+		}
+
+		return 1;
+	}
+
+	private static int launchSetMotion(ServerCommandSource source, Collection<? extends Entity> entityToLaunch, double motX, double motY, double motZ) {
+		Iterator entitiesCollection = entityToLaunch.iterator();
+
+		while (entitiesCollection.hasNext()) {
+			Entity target = (Entity) entitiesCollection.next();
+			if(target instanceof LivingEntity) {
+				//source.sendFeedback(() -> Text.of("Set motion to " + ((LivingEntity)target).getUuidAsString() + "with x:" + motX + " y:" + motY + " z:" + motZ), false);
+				((LivingEntity)target).setVelocity(motX, motY, motZ);
 				((LivingEntity)target).velocityModified = true;
 			}
 		}
