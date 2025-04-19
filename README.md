@@ -1,4 +1,4 @@
-In Vanilla Minecraft the main way to modify entity motion is with /data, and you are not allowed to modfify player data.
+In Vanilla Minecraft the main way to modify entity motion is with /data, and you are not allowed to modify player data.
 
 This mod is here to remove this limit with 1 singular command !
 
