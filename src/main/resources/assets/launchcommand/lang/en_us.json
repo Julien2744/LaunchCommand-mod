@@ -1,0 +1,6 @@
+{
+  "commands.launchcmd.launchadd.success.single" : "Applied motion to %s",
+  "commands.launchcmd.launchadd.success.multiple" : "Applied motion to %s entities",
+  "commands.launchcmd.launchset.success.single" : "Set motion to %s",
+  "commands.launchcmd.launchset.success.multiple" : "Set motion to %s entities"
+}
