@@ -35,7 +35,7 @@ public class LaunchCommand {
     }
 
     private void registerCommand(final RegisterCommandsEvent event) {
-        command.register(event.getDispatcher());
+        LaunchCommandCmd.register(event.getDispatcher());
     }
 
 
