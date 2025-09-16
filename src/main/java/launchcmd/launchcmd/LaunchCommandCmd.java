@@ -71,6 +71,42 @@ public class LaunchCommandCmd {
                                                         )
 
                                         )
+                                        .then(
+                                                Commands.literal("setMotionX")
+                                                        .then(
+                                                                Commands.argument("motionX", DoubleArgumentType.doubleArg())
+                                                                        .executes(context -> launchSetMotionX(
+                                                                                context.getSource(),
+                                                                                EntityArgument.getEntities(context, "targets"),
+                                                                                DoubleArgumentType.getDouble(context, "motionX")
+                                                                        ))
+                                                        )
+
+                                        )
+                                        .then(
+                                                Commands.literal("setMotionY")
+                                                        .then(
+                                                                Commands.argument("motionY", DoubleArgumentType.doubleArg())
+                                                                        .executes(context -> launchSetMotionY(
+                                                                                context.getSource(),
+                                                                                EntityArgument.getEntities(context, "targets"),
+                                                                                DoubleArgumentType.getDouble(context, "motionY")
+                                                                        ))
+                                                        )
+
+                                        )
+                                        .then(
+                                                Commands.literal("setMotionZ")
+                                                        .then(
+                                                                Commands.argument("motionZ", DoubleArgumentType.doubleArg())
+                                                                        .executes(context -> launchSetMotionZ(
+                                                                                context.getSource(),
+                                                                                EntityArgument.getEntities(context, "targets"),
+                                                                                DoubleArgumentType.getDouble(context, "motionZ")
+                                                                        ))
+                                                        )
+
+                                        )
                         )
         );
     }
@@ -137,6 +173,63 @@ public class LaunchCommandCmd {
         }
         else {
             source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.multiple", entitiesToLaunch.size()), true);
+        }
+
+        return entitiesToLaunch.size();
+    }
+
+    private static int launchSetMotionX(CommandSourceStack source, Collection<? extends Entity> entitiesToLaunch, double motX) {
+        for (Entity entity : entitiesToLaunch) {
+            entity.setDeltaMovement(motX, entity.getDeltaMovement().y(), entity.getDeltaMovement().z());
+            //fix player not being affected
+            if (entity instanceof Player) {
+                entity.hurtMarked = true;
+            }
+        }
+
+        if(entitiesToLaunch.size() == 1) {
+            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
+        }
+        else {
+            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.multiple", entitiesToLaunch.size()), true);
+        }
+
+        return entitiesToLaunch.size();
+    }
+
+    private static int launchSetMotionY(CommandSourceStack source, Collection<? extends Entity> entitiesToLaunch, double motY) {
+        for (Entity entity : entitiesToLaunch) {
+            entity.setDeltaMovement(entity.getDeltaMovement().x(), motY, entity.getDeltaMovement().z());
+            //fix player not being affected
+            if (entity instanceof Player) {
+                entity.hurtMarked = true;
+            }
+        }
+
+        if(entitiesToLaunch.size() == 1) {
+            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
+        }
+        else {
+            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.multiple", entitiesToLaunch.size()), true);
+        }
+
+        return entitiesToLaunch.size();
+    }
+
+    private static int launchSetMotionZ(CommandSourceStack source, Collection<? extends Entity> entitiesToLaunch, double motZ) {
+        for (Entity entity : entitiesToLaunch) {
+            entity.setDeltaMovement(entity.getDeltaMovement().x(), entity.getDeltaMovement().y(), motZ);
+            //fix player not being affected
+            if (entity instanceof Player) {
+                entity.hurtMarked = true;
+            }
+        }
+
+        if(entitiesToLaunch.size() == 1) {
+            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
+        }
+        else {
+            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.multiple", entitiesToLaunch.size()), true);
         }
 
         return entitiesToLaunch.size();
