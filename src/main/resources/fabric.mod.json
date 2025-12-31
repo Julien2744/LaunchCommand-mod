@@ -16,12 +16,12 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"launchcmd.launchcmd.LaunchCommand"
+			"launchcmd.launchcmd.LaunchCommandCmd"
 		]
 	},
 	"depends": {
-		"fabricloader": ">=0.16.7",
-		"minecraft": ">=1.21.1",
+		"fabricloader": ">=0.18.2",
+		"minecraft": ">=1.21.11",
 		"java": ">=21",
 		"fabric-api": "*"
 	},
