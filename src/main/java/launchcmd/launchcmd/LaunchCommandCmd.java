@@ -148,17 +148,6 @@ public class LaunchCommandCmd implements ModInitializer {
 		});
 	}
 
-	private static void syncEntity(Entity entity) {
-		//fix player not being affected
-		entity.hurtMarked = true;
-		entity.needsSync = true;
-
-		if (entity instanceof Player player) {
-			//I have no idea what this does, but it was in the ApplyEntityImpulse class
-			player.applyPostImpulseGraceTime(10);
-		}
-	}
-
 	private static int launchAddMotion(CommandSourceStack source, Collection<? extends Entity> entitiesToLaunch, double motX, double motY, double motZ) {
 		for (Entity entity : entitiesToLaunch) {
 			Vec3 motion = new Vec3(motX, motY, motZ);
