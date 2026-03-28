@@ -15,7 +15,7 @@ assignees: Julien2744
 
 *text here*
 
-**Mod loader version** (optional)
+**Mod loader** (version optional)
 
 *text here*
 

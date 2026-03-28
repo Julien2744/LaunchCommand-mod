@@ -4,11 +4,13 @@ This mod is here to remove this limit with 1 singular command !
 
 ## How to use
 
-- `/launch <entities> addMotion <motionX> <motionY> <motionZ>` : will add motion to the target(s)
-  
-- `/launch <entities> setMotion <motionX> <motionY> <motionZ>` : will set the motion to the target(s)
-  
-- `/launch <entities> looking <force>` : will add motion to the target(s) depending on the `force` argument and the rotation of the source (who executed the command)
+- `/launch <entities> addMotion <motionX> <motionY> <motionZ>` : Add motion to the target(s)
+
+- `/launch <entities> setMotion <motionX> <motionY> <motionZ>` : Set the motion to the target(s)
+
+- `/launch <entities> looking <force>` : Add motion to the target(s) depending on the `force` argument and the rotation of the source (who executed the command)
+
+- `/launch <entities> toward <pos|entity> <force>` : Launch every targets toward a position/entity specified
 
 ## Other informations
 
