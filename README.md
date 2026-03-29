@@ -10,7 +10,7 @@ This mod is here to remove this limit with 1 singular command !
   
 - `/launch <entities> looking <force>` : Add motion to the target(s) depending on the `force` argument and the rotation of the source (who executed the command)
 
-- `/launch <entities> toward <pos|entity> <force>` : Launch every targets toward a position/entity specified
+- `/launch <entities> toward <pos|entity> <force>` : Launch every targets toward the position/entity specified (only for version r1.3 and above)
 
 ## Other informations
 
