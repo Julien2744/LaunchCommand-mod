@@ -39,9 +39,7 @@ displayName="${mod_name}" #mandatory
 #authors=""
 
 # The description text for the mod (multi line!) (#mandatory)
-description='''
-Example mod description.
-'''
+description= "Launch entities via a command"
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
 #[[mixins]]

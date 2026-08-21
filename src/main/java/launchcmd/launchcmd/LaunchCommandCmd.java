@@ -147,29 +147,45 @@ public class LaunchCommandCmd {
         );
     }
 
+    /* Functions to remove repetition */
+    // I don't really know much about java, but I thought the entity argument would be a copy when calling the function
+    private static void updateEntity(Entity entity) {
+        entity.hurtMarked = true;
+        entity.needsSync = true;
 
-
-    private static int launchAddMotion(CommandSourceStack source, Collection<? extends Entity> entitiesToLaunch, double motX, double motY, double motZ) {
-        for (Entity entity : entitiesToLaunch) {
-            Vec3 motion = new Vec3(motX, motY, motZ);
-            entity.addDeltaMovement(motion);
-
-            //fix player not being affected
-            entity.hurtMarked = true;
-            entity.needsSync = true;
-
-            if (entity instanceof Player player) {
-                //I have no idea what this does but it was in the ApplyEntityImpulse class
-                player.applyPostImpulseGraceTime(10);
-            }
+        //I have no idea what this does, but it was in the ApplyEntityImpulse class
+        if (entity instanceof Player player) {
+            player.applyPostImpulseGraceTime(10);
         }
+    }
 
+    private static void sendCommandSuccess(CommandSourceStack source, Collection<? extends Entity> entitiesToLaunch) {
         if(entitiesToLaunch.size() == 1) {
             source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
         }
         else {
             source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.multiple", entitiesToLaunch.size()), true);
         }
+    }
+
+    private static float degreeToRadian_pitch(float degree) {
+        return (float)((-degree * (Math.PI / 180.0f)) + Math.PI / 2);
+    }
+
+    private static float degreeToRadian_yaw(float degree) {
+        return (float)((degree * (Math.PI / 180.0f)) + Math.PI / 2);
+    }
+
+    /* Behavior of the commands */
+    private static int launchAddMotion(CommandSourceStack source, Collection<? extends Entity> entitiesToLaunch, double motX, double motY, double motZ) {
+        for (Entity entity : entitiesToLaunch) {
+            Vec3 motion = new Vec3(motX, motY, motZ);
+            entity.addDeltaMovement(motion);
+
+            updateEntity(entity);
+        }
+
+        sendCommandSuccess(source, entitiesToLaunch);
 
         return entitiesToLaunch.size();
     }
@@ -177,30 +193,18 @@ public class LaunchCommandCmd {
         for (Entity entity : entitiesToLaunch) {
             entity.setDeltaMovement(motX, motY, motZ);
 
-            //fix player not being affected
-            entity.hurtMarked = true;
-            entity.needsSync = true;
-
-            if (entity instanceof Player player) {
-                //I have no idea what this does but it was in the ApplyEntityImpulse class
-                player.applyPostImpulseGraceTime(10);
-            }
+            updateEntity(entity);
         }
 
-        if(entitiesToLaunch.size() == 1) {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
-        }
-        else {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.multiple", entitiesToLaunch.size()), true);
-        }
+        sendCommandSuccess(source, entitiesToLaunch);
 
         return entitiesToLaunch.size();
     }
 
     private static int launchLooking(CommandSourceStack source, Collection<? extends Entity> entitiesToLaunch, double force) {
         //angle is in degree, we need to convert it to radian
-        float sourcePitch = (float)((-(source.getRotation().x) * (Math.PI / 180.0f)) + Math.PI / 2);
-        float sourceYaw = (float)((source.getRotation().y * (Math.PI / 180.0f)) + Math.PI / 2);
+        float sourcePitch = degreeToRadian_pitch(source.getRotation().x);
+        float sourceYaw = degreeToRadian_yaw(source.getRotation().y);
 
         for (Entity entity : entitiesToLaunch) {
             Vec3 motion = new Vec3(
@@ -209,22 +213,10 @@ public class LaunchCommandCmd {
                     force * (Math.sin(sourceYaw)*Math.sin(sourcePitch)));
             entity.addDeltaMovement(motion);
 
-            //fix player not being affected
-            entity.hurtMarked = true;
-            entity.needsSync = true;
-
-            if (entity instanceof Player player) {
-                //I have no idea what this does but it was in the ApplyEntityImpulse class
-                player.applyPostImpulseGraceTime(10);
-            }
+            updateEntity(entity);
         }
 
-        if(entitiesToLaunch.size() == 1) {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
-        }
-        else {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.multiple", entitiesToLaunch.size()), true);
-        }
+        sendCommandSuccess(source, entitiesToLaunch);
 
         return entitiesToLaunch.size();
     }
@@ -245,9 +237,9 @@ public class LaunchCommandCmd {
             float newYaw = Mth.wrapDegrees((float)(Mth.atan2(f, d) * 180.0F / (float)Math.PI) - 90.0F);
 
             //convert new rotation (degree) to radiant
-            //this is so inefficient sorry to everyone readying this
-            newPitch = (float)((-newPitch * (Math.PI / 180.0f)) + Math.PI / 2);
-            newYaw = (float)((newYaw * (Math.PI / 180.0f)) + Math.PI / 2);
+            //this is so inefficient sorry to anyone readying this
+            newPitch = degreeToRadian_pitch(newPitch);
+            newYaw= degreeToRadian_yaw(newYaw);
 
             Vec3 motion = new Vec3(
                     force * (Math.cos(newYaw)*Math.sin(newPitch)),
@@ -255,22 +247,10 @@ public class LaunchCommandCmd {
                     force * (Math.sin(newYaw)*Math.sin(newPitch)));
             entity.addDeltaMovement(motion);
 
-            //fix player not being affected
-            entity.hurtMarked = true;
-            entity.needsSync = true;
-
-            if (entity instanceof Player player) {
-                //I have no idea what this does, but it was in the ApplyEntityImpulse class
-                player.applyPostImpulseGraceTime(10);
-            }
+            updateEntity(entity);
         }
 
-        if(entitiesToLaunch.size() == 1) {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
-        }
-        else {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.multiple", entitiesToLaunch.size()), true);
-        }
+        sendCommandSuccess(source, entitiesToLaunch);
 
         return entitiesToLaunch.size();
     }
@@ -292,8 +272,8 @@ public class LaunchCommandCmd {
 
             //convert new rotation (degree) to radiant
             //this is so inefficient sorry to everyone readying this
-            newPitch = (float)((-newPitch * (Math.PI / 180.0f)) + Math.PI / 2);
-            newYaw = (float)((newYaw * (Math.PI / 180.0f)) + Math.PI / 2);
+            newPitch = degreeToRadian_pitch(newPitch);
+            newYaw= degreeToRadian_yaw(newYaw);
 
             Vec3 motion = new Vec3(
                     force * (Math.cos(newYaw)*Math.sin(newPitch)),
@@ -301,22 +281,10 @@ public class LaunchCommandCmd {
                     force * (Math.sin(newYaw)*Math.sin(newPitch)));
             entity.addDeltaMovement(motion);
 
-            //fix player not being affected
-            entity.hurtMarked = true;
-            entity.needsSync = true;
-
-            if (entity instanceof Player player) {
-                //I have no idea what this does, but it was in the ApplyEntityImpulse class
-                player.applyPostImpulseGraceTime(10);
-            }
+            updateEntity(entity);
         }
 
-        if(entitiesToLaunch.size() == 1) {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
-        }
-        else {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchadd.success.multiple", entitiesToLaunch.size()), true);
-        }
+        sendCommandSuccess(source, entitiesToLaunch);
 
         return entitiesToLaunch.size();
     }
@@ -325,22 +293,10 @@ public class LaunchCommandCmd {
         for (Entity entity : entitiesToLaunch) {
             entity.setDeltaMovement(motX, entity.getDeltaMovement().y(), entity.getDeltaMovement().z());
 
-            //fix player not being affected
-            entity.hurtMarked = true;
-            entity.needsSync = true;
-
-            if (entity instanceof Player player) {
-                //I have no idea what this does but it was in the ApplyEntityImpulse class
-                player.applyPostImpulseGraceTime(10);
-            }
+            updateEntity(entity);
         }
 
-        if(entitiesToLaunch.size() == 1) {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
-        }
-        else {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.multiple", entitiesToLaunch.size()), true);
-        }
+        sendCommandSuccess(source, entitiesToLaunch);
 
         return entitiesToLaunch.size();
     }
@@ -349,22 +305,10 @@ public class LaunchCommandCmd {
         for (Entity entity : entitiesToLaunch) {
             entity.setDeltaMovement(entity.getDeltaMovement().x(), motY, entity.getDeltaMovement().z());
 
-            //fix player not being affected
-            entity.hurtMarked = true;
-            entity.needsSync = true;
-
-            if (entity instanceof Player player) {
-                //I have no idea what this does but it was in the ApplyEntityImpulse class
-                player.applyPostImpulseGraceTime(10);
-            }
+            updateEntity(entity);
         }
 
-        if(entitiesToLaunch.size() == 1) {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
-        }
-        else {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.multiple", entitiesToLaunch.size()), true);
-        }
+        sendCommandSuccess(source, entitiesToLaunch);
 
         return entitiesToLaunch.size();
     }
@@ -373,22 +317,10 @@ public class LaunchCommandCmd {
         for (Entity entity : entitiesToLaunch) {
             entity.setDeltaMovement(entity.getDeltaMovement().x(), entity.getDeltaMovement().y(), motZ);
 
-            //fix player not being affected
-            entity.hurtMarked = true;
-            entity.needsSync = true;
-
-            if (entity instanceof Player player) {
-                //I have no idea what this does but it was in the ApplyEntityImpulse class
-                player.applyPostImpulseGraceTime(10);
-            }
+            updateEntity(entity);
         }
 
-        if(entitiesToLaunch.size() == 1) {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.single", entitiesToLaunch.iterator().next().getDisplayName()), true);
-        }
-        else {
-            source.sendSuccess(() -> Component.translatable("commands.launchcmd.launchset.success.multiple", entitiesToLaunch.size()), true);
-        }
+        sendCommandSuccess(source, entitiesToLaunch);
 
         return entitiesToLaunch.size();
     }
