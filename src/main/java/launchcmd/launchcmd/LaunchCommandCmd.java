@@ -8,8 +8,11 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
@@ -150,12 +153,17 @@ public class LaunchCommandCmd {
     /* Functions to remove repetition */
     // I don't really know much about java, but I thought the entity argument would be a copy when calling the function
     private static void updateEntity(Entity entity) {
-        entity.hurtMarked = true;
-        entity.needsSync = true;
+        // this was taken in ApplyEntityImpulse.java
 
-        //I have no idea what this does, but it was in the ApplyEntityImpulse class
-        if (entity instanceof Player player) {
-            player.applyPostImpulseGraceTime(10);
+        if (entity instanceof ServerPlayer player) {
+            player.connection.send(new ClientboundSetEntityMotionPacket(entity));
+            entity.syncVelocity = false;
+        } else {
+            entity.syncVelocity = true;
+        }
+
+        if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.applyPostImpulseGraceTime(10);
         }
     }
 
